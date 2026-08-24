@@ -1,0 +1,33 @@
+<svg class="kh-logo" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="KHMatrix shield logo">
+  <defs>
+    <linearGradient id="khGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7ce8ff"/>
+      <stop offset="55%" stop-color="#2fb6ff"/>
+      <stop offset="100%" stop-color="#8a6cff"/>
+    </linearGradient>
+    <filter id="khGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="3.2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g filter="url(#khGlow)" stroke="url(#khGrad)" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path class="kh-shield-path" d="M100 12 L172 34 L172 100 C172 150 140 186 100 208 C60 186 28 150 28 100 L28 34 Z"/>
+    <!-- K -->
+    <path d="M62 66 L62 146 M62 108 L96 66 M62 108 L96 146"/>
+    <!-- H -->
+    <path d="M112 66 L112 146 M112 108 L146 108 M146 66 L146 146"/>
+    <!-- keyhole accent -->
+    <circle cx="104" cy="120" r="7"/>
+    <path d="M104 127 L104 140"/>
+    <!-- circuit accents -->
+    <circle class="kh-node" cx="52" cy="46" r="3" fill="url(#khGrad)" stroke="none"/>
+    <circle class="kh-node" cx="148" cy="46" r="3" fill="url(#khGrad)" stroke="none"/>
+    <circle class="kh-node" cx="52" cy="150" r="3" fill="url(#khGrad)" stroke="none"/>
+    <circle class="kh-node" cx="148" cy="150" r="3" fill="url(#khGrad)" stroke="none"/>
+    <path d="M40 100 L28 100 M172 100 L160 100" stroke-width="1.6"/>
+  </g>
+</svg>

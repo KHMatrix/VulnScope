@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KHMatrix // Access Terminal</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-body">
+<canvas id="matrixCanvas"></canvas>
+
+<div class="login-wrap">
+  <div class="logo-block">
+    {% include "logo_svg.html" %}
+    <div class="brand-title">KHMATRIX</div>
+    <div class="brand-sub">CYBER-SECURITY AUDITOR</div>
+  </div>
+
+  <div class="glass-panel login-panel">
+    {% if needs_setup %}
+    <h2 class="panel-title">// FIRST-RUN SETUP</h2>
+    <p class="panel-note">No operator account exists. Create the administrator account to continue.</p>
+    <form id="setupForm" autocomplete="off">
+      <label>OPERATOR USERNAME</label>
+      <input type="text" id="setupUsername" required minlength="3" autocomplete="off">
+      <label>PASSWORD (min 10 characters)</label>
+      <input type="password" id="setupPassword" required minlength="10" autocomplete="new-password">
+      <button type="submit" class="neon-btn">CREATE ACCOUNT</button>
+      <div class="form-error" id="setupError"></div>
+    </form>
+    {% else %}
+    <h2 class="panel-title">// OPERATOR LOGIN</h2>
+    <form id="loginForm" autocomplete="off">
+      <label>USERNAME</label>
+      <input type="text" id="loginUsername" required autocomplete="username">
+      <label>PASSWORD</label>
+      <input type="password" id="loginPassword" required autocomplete="current-password">
+      <button type="submit" class="neon-btn">AUTHENTICATE</button>
+      <div class="form-error" id="loginError"></div>
+    </form>
+    {% endif %}
+  </div>
+  <div class="footer-note">AUTHORIZED USE ONLY &middot; NON-DESTRUCTIVE ASSESSMENT PLATFORM</div>
+</div>
+
+<script src="{{ url_for('static', filename='js/matrix.js') }}"></script>
+<script>
+const setupForm = document.getElementById('setupForm');
+if (setupForm) {
+  setupForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('setupUsername').value;
+    const password = document.getElementById('setupPassword').value;
+    const res = await fetch('/api/setup', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({username, password})
+    });
+    const data = await res.json();
+    if (res.ok) { window.location.href = '/login'; }
+    else { document.getElementById('setupError').textContent = data.error || 'Setup failed.'; }
+  });
+}
+const loginForm = document.getElementById('loginForm');
+if (loginForm) {
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('loginUsername').value;
+    const password = document.getElementById('loginPassword').value;
+    const res = await fetch('/api/login', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({username, password})
+    });
+    const data = await res.json();
+    if (res.ok) { window.location.href = '/'; }
+    else { document.getElementById('loginError').textContent = data.error || 'Login failed.'; }
+  });
+}
+</script>
+</body>
+</html>

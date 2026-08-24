@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KHMatrix // Cyber-Security Auditor</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<canvas id="matrixCanvas"></canvas>
+
+<div class="app-shell">
+  <header class="topbar">
+    <div class="brand-mini">
+      {% include "logo_svg.html" %}
+      <div>
+        <div class="brand-title small">KHMATRIX</div>
+        <div class="brand-sub small">CYBER-SECURITY AUDITOR</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button id="audioToggle" class="ghost-btn">AUDIO: OFF</button>
+      <button id="logoutBtn" class="ghost-btn danger">LOGOUT</button>
+    </div>
+  </header>
+
+  <section class="glass-panel scan-launch">
+    <div class="row wrap gap">
+      <div class="field grow">
+        <label>AUTHORIZED ASSET TARGET</label>
+        <select id="assetSelect"></select>
+      </div>
+      <button id="startScanBtn" class="neon-btn">START SCAN</button>
+      <button id="abortScanBtn" class="neon-btn danger" disabled>ABORT SCAN</button>
+      <button id="newAssetBtn" class="ghost-btn">+ ADD ASSET</button>
+    </div>
+    <div id="authBanner" class="auth-banner">TARGET AUTHORIZATION: NOT VERIFIED</div>
+  </section>
+
+  <section class="stat-grid">
+    <div class="glass-panel stat-card"><div class="stat-label">ASSETS</div><div class="stat-value" id="statAssets">0</div></div>
+    <div class="glass-panel stat-card"><div class="stat-label">SERVICES</div><div class="stat-value" id="statServices">0</div></div>
+    <div class="glass-panel stat-card"><div class="stat-label">FINDINGS</div><div class="stat-value" id="statFindings">0</div></div>
+    <div class="glass-panel stat-card critical"><div class="stat-label">CRITICAL</div><div class="stat-value" id="statCritical">0</div></div>
+  </section>
+
+  <section class="glass-panel telemetry-panel">
+    <div class="panel-title">// LIVE SECURITY TELEMETRY</div>
+    <div id="telemetryFeed" class="telemetry-feed"></div>
+  </section>
+
+  <section class="glass-panel">
+    <div class="panel-title">// ASSET INVENTORY</div>
+    <div class="table-wrap">
+      <table id="assetTable">
+        <thead><tr><th>IP</th><th>TYPE</th><th>CONFIDENCE</th><th>HOSTNAME</th><th>OS</th><th>OPEN PORTS</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="glass-panel">
+    <div class="panel-title row space-between">
+      <span>// VULNERABILITY FINDINGS</span>
+      <span class="report-links" id="reportLinks"></span>
+    </div>
+    <div class="sev-legend">
+      <span class="badge badge-critical">CRITICAL <b id="cCritical">0</b></span>
+      <span class="badge badge-high">HIGH <b id="cHigh">0</b></span>
+      <span class="badge badge-medium">MEDIUM <b id="cMedium">0</b></span>
+      <span class="badge badge-low">LOW <b id="cLow">0</b></span>
+      <span class="badge badge-info">INFO <b id="cInfo">0</b></span>
+    </div>
+    <div class="table-wrap">
+      <table id="findingsTable">
+        <thead><tr><th>SEVERITY</th><th>TITLE</th><th>CONFIDENCE</th><th>LOCATION</th><th>CVE</th><th>CVSS</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="glass-panel">
+    <div class="panel-title">// ARCHIVED INTEL</div>
+    <div class="row wrap gap" style="margin-bottom:10px;">
+      <input id="archiveSearch" placeholder="Search archived scans by asset name..." class="grow">
+    </div>
+    <div class="table-wrap">
+      <table id="archiveTable">
+        <thead><tr><th>SCAN</th><th>ASSET</th><th>STARTED</th><th>STATUS</th><th>FINDINGS</th><th>ACTIONS</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<!-- Add Asset Modal -->
+<div id="assetModal" class="modal-backdrop hidden">
+  <div class="glass-panel modal">
+    <div class="panel-title">// AUTHORIZED ASSET INVENTORY — NEW ENTRY</div>
+    <form id="assetForm">
+      <label>ASSET NAME</label>
+      <input type="text" id="af_name" placeholder="LAB-ROUTER">
+      <label>TARGET (IP / CIDR / HOSTNAME / URL)</label>
+      <input type="text" id="af_target" required placeholder="192.168.10.0/24">
+      <div class="row gap">
+        <div class="field grow">
+          <label>DEVICE TYPE HINT</label>
+          <input type="text" id="af_devicetype" placeholder="Router, Camera, Server...">
+        </div>
+        <div class="field grow">
+          <label>ENVIRONMENT</label>
+          <input type="text" id="af_env" placeholder="Cyber Lab">
+        </div>
+      </div>
+      <div class="row gap">
+        <div class="field grow">
+          <label>OWNER</label>
+          <input type="text" id="af_owner" placeholder="You">
+        </div>
+      </div>
+      <label>NOTES</label>
+      <textarea id="af_notes" rows="2"></textarea>
+      <label class="checkbox-row">
+        <input type="checkbox" id="af_authorized">
+        I confirm I own this asset or have explicit written authorization to assess it.
+      </label>
+      <div class="row gap">
+        <button type="submit" class="neon-btn">SAVE ASSET</button>
+        <button type="button" id="closeAssetModal" class="ghost-btn">CANCEL</button>
+      </div>
+      <div class="form-error" id="assetFormError"></div>
+    </form>
+  </div>
+</div>
+
+<script>window.CSRF_TOKEN = {{ csrf_token|tojson }};</script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="{{ url_for('static', filename='js/matrix.js') }}"></script>
+<script src="{{ url_for('static', filename='js/audio.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
