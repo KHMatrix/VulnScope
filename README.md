@@ -121,10 +121,3 @@ This is a working reference implementation, not a commercial-grade scanner. In p
 
 All data lives in `instance/khmatrix.db` (SQLite). Delete that file to reset everything
 (assets, scans, findings, users) — you'll be prompted to create a new operator account.
-# VulnScope
-# VulnScope
-# VulnScope
-# VulnScope
-# VulnScope
-# VulnScope
-# VulnScope
