@@ -124,3 +124,4 @@ All data lives in `instance/khmatrix.db` (SQLite). Delete that file to reset eve
 # VulnScope
 # VulnScope
 # VulnScope
+# VulnScope
