@@ -123,3 +123,4 @@ All data lives in `instance/khmatrix.db` (SQLite). Delete that file to reset eve
 (assets, scans, findings, users) — you'll be prompted to create a new operator account.
 # VulnScope
 # VulnScope
+# VulnScope
